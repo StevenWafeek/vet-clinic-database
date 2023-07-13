@@ -106,16 +106,18 @@ LIMIT 1;
  
 --  How many different animals did Stephanie Mendez see?
 
- SELECT COUNT(DISTINCT animal_id) AS num_animals_seen
+SELECT DISTINCT animals.name
 FROM visits
-WHERE vet_id = (SELECT id FROM vets WHERE name = 'Stephanie Mendez');
+JOIN animals ON visits.animal_id = animals.id
+JOIN vets ON visits.vet_id = vets.id
+WHERE vets.name = 'Stephanie Mendez';
 
 -- List all vets and their specialties, including vets with no specialties.
 
-SELECT vets.name AS vet_name, specialties.name AS specialty_name
+SELECT vets.*, species.name AS specialty_name
 FROM vets
 LEFT JOIN specializations ON vets.id = specializations.vet_id
-LEFT JOIN species AS specialties ON specializations.species_id = specialties.id;
+LEFT JOIN species ON specializations.species_id = species.id;
 
 -- List all animals that visited Stephanie Mendez between April 1st and August 30th, 2020.
 SELECT animals.name AS animal_name, visits.visit_date
@@ -143,7 +145,7 @@ ORDER BY visits.visit_date ASC
 LIMIT 1;
 
 -- Details for most recent visit: animal information, vet information, and date of visit.
-SELECT animals.name AS animal_name, vets.name AS vet_name, visits.visit_date
+SELECT animals.*, vets.*, visits.visit_date
 FROM visits
 JOIN animals ON visits.animal_id = animals.id
 JOIN vets ON visits.vet_id = vets.id
